@@ -7,7 +7,7 @@ import os
 load_dotenv()
 
 # INIT API
-api = Flask(__name__)
+app = Flask(__name__)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
@@ -15,25 +15,25 @@ engine = create_engine(DATABASE_URL)
 def load_data():
     return pd.read_sql("SELECT * FROM plants", engine)
 
-@api.route("/")
+@app.route("/")
 def home():
-    res = jsonify({"message":"CCS Energy API is running!"})
+    res = jsonify({"message":"CCS Energy app is running!"})
     return res
 
-@api.get("/items")
+@app.get("/items")
 def get_all():
     df = load_data()
     res = jsonify(df.to_dict(orient='records'))
     return res
 
-@api.route("/plants/<int:plant_id>", methods=["GET"])
+@app.route("/plants/<int:plant_id>", methods=["GET"])
 def get_one(plant_id):
     df = load_data()
     if plant_id < 0 or plant_id >= len(df):
         return jsonify({"error": "Plant not found"}), 404
     return jsonify(df.iloc[plant_id].to_dict())
 
-@api.route("/search", methods=["GET"])
+@app.route("/search", methods=["GET"])
 def search():
     df = load_data()
     country = request.args.get("country")
@@ -48,4 +48,4 @@ def search():
     return jsonify(result.to_dict(orient="records"))
 
 if __name__ == "__main__":
-    api.run(debug=True)
+    app.run(debug=True)
