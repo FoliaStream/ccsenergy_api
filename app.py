@@ -3,11 +3,14 @@ import pandas as pd
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
+from flask_cors import CORS
+
 
 load_dotenv()
 
 # INIT API
 app = Flask(__name__)
+CORS(app)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
